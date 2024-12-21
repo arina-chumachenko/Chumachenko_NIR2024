@@ -15,16 +15,19 @@
 
 .. class:: center
 
-    :Название исследуемой задачи: Мое название работы
-    :Тип научной работы: M1P/НИР/CoIS
-    :Автор: Имя Отчество Фамилия
-    :Научный руководитель: степень, Фамилия Имя Отчество
-    :Научный консультант(при наличии): степень, Фамилия Имя Отчество
+    :Название исследуемой задачи: Controlled Image Editing Mechanisms Based on Diffusion Models
+    :Тип научной работы: НИР
+    :Автор: Arina Chumachenko
+    :Научный руководитель: Ivan Oseledets 
+    :Научный консультант(при наличии): Andrey Kuznetsov
 
 Abstract
 ========
+The primary goal of this research is to develop methods for the correct integration of new concepts into the embedding space of text-to-image generative models to enhance the quality of output images. By achieving this, the research seeks to enable controlled modification of concepts, ensuring that the semantics of personalized phrases remain closely aligned with their corresponding category-centered words. This alignment is critical for preserving the compositional and semantic integrity of the generated images.
 
-Purus sit amet luctus venenatis lectus magna fringilla. Condimentum id venenatis a condimentum vitae sapien. Auctor neque vitae tempus quam pellentesque nec nam aliquam. Eget egestas purus viverra accumsan in. Nam aliquam sem et tortor. Donec et odio pellentesque diam volutpat commodo. Odio pellentesque diam volutpat commodo sed egestas. Sit amet dictum sit amet justo. Pellentesque sit amet porttitor eget. Imperdiet sed euismod nisi porta lorem mollis aliquam ut. Quis varius quam quisque id diam vel quam elementum. Ornare lectus sit amet est placerat in. Vulputate dignissim suspendisse in est ante. Elit sed vulputate mi sit amet mauris. Egestas sed tempus urna et pharetra pharetra. Viverra tellus in hac habitasse platea dictumst vestibulum rhoncus.
+The research aims to learn effective text embeddings for new concepts that not only accurately represent the concepts but also seamlessly integrate with existing tokens in the model's language-vision dictionary. The enhanced dictionary would bind newly introduced words with specific user-defined subjects, enabling the model to synthesize novel, photorealistic images of these subjects in diverse contexts while maintaining their key identifying features. Ultimately, the research strives to expand the capabilities of generative models, allowing for precise personalization and editing without compromising image quality or semantic coherence.
+
+
 
 Research publications
 ===============================
