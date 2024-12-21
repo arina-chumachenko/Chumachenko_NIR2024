@@ -1214,117 +1214,6 @@ def main():
                 encoder_hidden_states1 = text_encoder(batch["text1"])[0].clone().to(dtype=weight_dtype)
                 encoder_hidden_states2 = text_encoder(batch["text2"])[0].clone().to(dtype=weight_dtype)
                 # encoder_hidden_states2: (1, 77, 1024) = (batch_size, sequence_length, feature_dim)
-
-                # word_id = torch.argmax(batch["text2"][0]).item() 
-
-                # # Count cosine similarities between superclass tokens and placeholder tokens
-                # # For regularization we count cos_sim between all tokens  exept them  
-                # cls_concept_cos_sim = F.cosine_similarity(
-                #     encoder_hidden_states1[:, word_id, :], 
-                #     encoder_hidden_states2[:, word_id, :], 
-                #     dim=-1
-                # ) 
-                # cls_concept_cos_sims.append(cls_concept_cos_sim.detach().cpu().numpy())
-
-                # # Count cosine similarities between tokens in superclass and placeholder embeddings
-                # # Get prompts 
-                # text1 = tokenizer.batch_decode(batch["text1"], skip_special_tokens=True)
-                # text2 = tokenizer.batch_decode(batch["text2"], skip_special_tokens=True)
-
-                # # Pairwise cosine similarities within embeddings
-                # # superclass embedding
-                # cosine_matrix_cls = F.cosine_similarity(
-                #     encoder_hidden_states1.unsqueeze(2), 
-                #     encoder_hidden_states1.unsqueeze(1), 
-                #     dim=-1
-                # ).cpu().detach().numpy()
-    
-                # # placeholder embedding
-                # cosine_matrix_plh = F.cosine_similarity(
-                #     encoder_hidden_states2.unsqueeze(2), 
-                #     encoder_hidden_states2.unsqueeze(1), 
-                #     dim=-1
-                # ).cpu().detach().numpy()
-                # # tokens_cos_sims_placeholder.append({cosine_matrix2, text2})
-                # # print('\ncls == plh', (cosine_matrix_cls == cosine_matrix_plh).all())
-
-                # diff_matrix = np.abs(cosine_matrix_cls - cosine_matrix_plh)
-                # loss_pairwise = torch.sum(torch.from_numpy(diff_matrix))
-                
-                
-                # clean_encoder_hidden_states1 = torch.cat((encoder_hidden_states1[:, :word_id, :], encoder_hidden_states1[:, word_id+1:, :]), dim=1)
-                # clean_encoder_hidden_states2 = torch.cat((encoder_hidden_states2[:, :word_id, :], encoder_hidden_states2[:, word_id+1:, :]), dim=1)
-                # # encoder_hidden_states2[:, word_id, :] = 0
-
-                # cos_sim = F.cosine_similarity(clean_encoder_hidden_states1, clean_encoder_hidden_states2, dim=-1) 
-                # loss_emb = torch.sum(1 - cos_sim) / clean_encoder_hidden_states1.shape[1] 
-                # # (0.8 - cos_sim) по модулю
-
-                # save_output = SaveOutput()
-                # hook_handles = []
-                # for name, layer in unet.named_modules():
-                #     if 'attn2.to_q' in name or 'attn2.to_k' in name:
-                #         handle = layer.register_forward_hook(save_output)
-                #         hook_handles.append(handle)
-                
-                # model_pred_1 = unet(
-                #     noisy_latents, 
-                #     timesteps, 
-                #     encoder_hidden_states1
-                # )
-                
-                # attention_probs_list1 = get_cross_attnention_maps(save_output)
-                # interp_attention_maps1 = interpolate_cross_attention_maps(attention_probs_list1)
-                # mean_attn_map1 = interp_attention_maps1.mean(dim=0)
-                # attn_maps1.append(mean_attn_map1.cpu().detach().numpy())
-                # mean_attn_map1[:, :, :, word_id] = 0
-
-                # for handle in hook_handles:
-                #     handle.remove()
-
-
-                # save_output = SaveOutput()
-                # hook_handles = []
-                # for name, layer in unet.named_modules():
-                #     if 'attn2.to_q' in name or 'attn2.to_k' in name:
-                #         handle = layer.register_forward_hook(save_output)
-                #         hook_handles.append(handle)
-                
-                # model_pred_2 = unet(
-                #     noisy_latents, 
-                #     timesteps, 
-                #     encoder_hidden_states2
-                # )
-
-                # attention_probs_list2 = get_cross_attnention_maps(save_output)
-                # interp_attention_maps2 = interpolate_cross_attention_maps(attention_probs_list2)
-                # mean_attn_map2 = interp_attention_maps2.mean(dim=0)
-                # attn_maps2.append(mean_attn_map2.cpu().detach().numpy())
-                # mean_attn_map2[:, :, :, word_id] = 0
-
-                # for handle in hook_handles:
-                #     handle.remove()
-
-                # n = mean_attn_map1.shape[-1]
-                # loss_attn = F.mse_loss(mean_attn_map1, mean_attn_map2, reduction="sum") 
-                # loss_attn /= (n - 1)
-
-                # pairwise_cos_sim_data.append({
-                #     "epoch": epoch,
-                #     "step": step,
-                #     "text1": text1,
-                #     "text2": text2,
-                #     "cosine_matrix_cls": cosine_matrix_cls,
-                #     "cosine_matrix_plh": cosine_matrix_plh,
-                #     "attn_maps1": attn_maps1,
-                #     "attn_maps2": attn_maps2
-                # })
-
-                # DONE: Move to args 
-                # lambda_emb = 1.5e-4
-                # lambda_attn = 0.05
-                # lambda_pairwise = 0.015
-                # lambda_hinge = 1
                 
                 word_ids = [torch.argmax(batch["text2"][i]).item() for i in range(bsz)]
                 # print('word_ids: ', word_ids)
@@ -1345,10 +1234,6 @@ def main():
                     cos_sims.append(cls_concept_cos_sim.detach().cpu().numpy())
                 cls_concept_cos_sims.append(np.array(cos_sims))
                 
-                # print('cls_concept_cos_sims: ', cls_concept_cos_sims)
-                # print('cls_concept_cos_sims.shape: ', np.array(cls_concept_cos_sims, dtype=object).shape)
-                # print('cls_concept_cos_sims.shape[0]: ', np.array(cls_concept_cos_sims, dtype=object).shape[0])
-
                 # Count cosine similarities between tokens in superclass and placeholder embeddings
                 # Get prompts 
                 text1 = tokenizer.batch_decode(batch["text1"], skip_special_tokens=True)
